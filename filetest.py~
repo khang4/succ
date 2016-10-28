@@ -1,5 +1,0 @@
-def main():
-    with open("test1.txt","r") as infile:
-        print(infile.read());
-
-main();
