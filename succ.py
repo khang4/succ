@@ -68,13 +68,24 @@ class crabs:
                 print("{:>3}".format(len(y.m_possible)),end="");
             print("");
 
-    def searchSingles(self):
+    def search(self):
+        while self.searchSingles(self.m_boxes)==1:
+            pass;
+
+        while self.searchSingles(self.m_rows)==1:
+            pass;
+
+        while self.searchSingles(self.m_cols)==1:
+            pass;
+
+    def searchSingles(self,crab):
         if self.m_filled==0:
             return 0;
 
         startFilled=self.m_filled;
+        possibilityChange=0;
 
-        for i,x in enumerate(self.m_boxes):
+        for i,x in enumerate(crab):
             #stuff for hiddensingle
             singleFound=set([1,2,3,4,5,6,7,8,9]);
             doubleFound=set([]);
@@ -122,8 +133,9 @@ class crabs:
                     #removing found doubles
                     if len(y.m_possible)>2:
                         y.m_possible-=foundDoublePair
+                        possibilityChange=1;
 
-        if self.m_filled==startFilled:
+        if self.m_filled==startFilled or possibilityChange==0:
             return -1;
 
         return 1;
@@ -157,17 +169,20 @@ def loadFile(mainCrabs,filename):
                     row+=1;
 
 def main():
+    if len(sys.argv)!=2:
+        return;
+
     mainCrabs=crabs();
 
     loadFile(mainCrabs,sys.argv[1]);
 
-    while mainCrabs.searchSingles()==1:
-        pass;
+    mainCrabs.printValues();
+    print("");
+    mainCrabs.search();
 
     mainCrabs.printValues();
-
-    # mainCrabs.printValues();
-    # mainCrabs.printNumPossible();
+    print("");
+    mainCrabs.printNumPossible();
 
     return;
 
