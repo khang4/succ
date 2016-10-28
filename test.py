@@ -1,6 +1,6 @@
 def main():
     bob=set([1,2,3]);
-    bob2=set([1,2]);
-    print(bob2&bob);
+    for x in bob:
+        print(x);
 
 main();

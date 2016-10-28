@@ -1,3 +1,5 @@
+import sys;
+
 class scell:
     def __init__(self,col,row,box):
         self.m_col=col;
@@ -32,6 +34,8 @@ class crabs:
 
     def add(self,col,row,value):
         # print("adding {} at col {} row {}".format(value,col,row));
+        if self.m_rows[row].m_cells[col].m_value!=-1:
+            return -1;
         self.m_rows[row].m_cells[col].m_value=value;
         self.m_rows[row].m_cells[col].m_possible.clear();        
 
@@ -68,16 +72,32 @@ class crabs:
         if self.m_filled==0:
             return 0;
 
+        startFilled=self.m_filled;
+
         for i,x in enumerate(self.m_boxes):
+            #stuff for hiddensingle
             singleFound=set([1,2,3,4,5,6,7,8,9]);
             doubleFound=set([]);
 
-            for y in x.m_cells:                
+            #stuff for doublepairs
+            doublePair=set([]);
+            foundDoublePair=set([]);
+
+            for y in x.m_cells:
+                #if 1 possibile left
                 if len(y.m_possible)==1:
                     addValue=y.m_possible.pop();
                     self.add(y.m_col,y.m_row,addValue);
                     # print("{} added at col {} row {}".format(addValue,y.m_col,y.m_row));
 
+                #check/add doublepair
+                if len(y.m_possible)==2:
+                    if frozenset(y.m_possible) in doublePair:
+                        for x2 in y.m_possible:
+                            foundDoublePair.add(x2);
+                    doublePair.add(frozenset(y.m_possible));
+
+                #checking for hiddensingle
                 if y.m_value!=-1:
                     singleFound.discard(y.m_value);
                     doubleFound.add(y.m_value);
@@ -89,14 +109,22 @@ class crabs:
                     doubleFound|=tempPossible;
 
             hiddenSingles=set([1,2,3,4,5,6,7,8,9])-doubleFound;
-            print("unique values in box {}: ".format(i),end="");
-            print(hiddenSingles);
-
+            # print("unique values in box {}: ".format(i),end="");
+            # print(hiddenSingles);
+            
+            #second pass (hidden singles, double pair)
             if len(hiddenSingles)!=0:
                 for y in x.m_cells:
                     tempIntersect=y.m_possible&hiddenSingles;
                     if len(tempIntersect)>0:
                         self.add(y.m_col,y.m_row,tempIntersect.pop());
+
+                    #removing found doubles
+                    if len(y.m_possible)>2:
+                        y.m_possible-=foundDoublePair
+
+        if self.m_filled==startFilled:
+            return -1;
 
         return 1;
                 
@@ -131,7 +159,7 @@ def loadFile(mainCrabs,filename):
 def main():
     mainCrabs=crabs();
 
-    loadFile(mainCrabs,"test1.txt");
+    loadFile(mainCrabs,sys.argv[1]);
 
     while mainCrabs.searchSingles()==1:
         pass;
