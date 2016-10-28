@@ -1,15 +1,18 @@
 class scell:
-    m_x=-1;
-    m_y=-1;
-    m_z=-1;
-
-    m_v=-1;
-    m_possible=set([1,2,3,4,5,6,7,8,9]);
-
     def __init__(self,x,y,z):
         self.m_x=x;
         self.m_y=y;
         self.m_z=z;
+
+        self.m_v=-1;
+        self.m_possible=set([1,2,3,4,5,6,7,8,9]);
+
+class crab:
+    def __init__(self):
+        self.m_values=set([]);
+        self.m_seen=set([]);
+        self.m_doubles=set([]);
+
 
 def genGraph():
     graph=[];
@@ -59,22 +62,36 @@ def boxGraphPrint(boxGraph):
 def addCell(x,y,v,graph):
     graph[0][y][x].m_v=v;
 
+    graph[0][y][x].m_possible.discard(v);
+
     #column (y)
     for x2 in graph[0]:
-        print(x2[y].m_y);
+        # print(x2[y].m_y);
+        x2[y].m_possible.discard(v);
     
     #row (x)
     for x3 in graph[0][y]:
-        print(x3.m_y);
+        #print(x3.m_y);
+        x3.m_possible.discard(v);
 
     #box (z)
     for x4 in graph[1][graph[0][y][x].m_z]:
-        print(x4.m_z);
+        #print(x4.m_z);
+        x4.m_possible.discard(v);
+
+def printimPossible(graph):
+    for x in graph:
+        for y in x:
+            print(list(set([1,2,3,4,5,6,7,8,9]).difference(y.m_possible)),end=" ");
+        print("");
 
 def main():
     #[graph,boxGraph]
     graph=genGraph();
 
-    addCell(1,3,2,graph);
+    addCell(1,0,2,graph);
+    addCell(2,0,1,graph);
+
+    printimPossible(graph[0]);
 
 main();
