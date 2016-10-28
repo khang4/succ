@@ -1,106 +1,57 @@
 class scell:
-    def __init__(self,x,y,z):
-        self.m_x=x;
-        self.m_y=y;
-        self.m_z=z;
-
-        self.m_v=-1;
+    def __init__(self):
+        self.m_value=-1;
         self.m_possible=set([1,2,3,4,5,6,7,8,9]);
 
 class crab:
     def __init__(self):
-        #tracks number of possiblities
-        possibleArray=[9,9,9,9,9,9,9,9,9];
+        self.m_cells=[];        
 
-        self.m_values=possibleArray[:];
-        self.m_seen=possibleArray[:];
-        self.m_doubles=possibleArray[:];
+class crabs:
+    def __init__(self):
+        self.m_cols=[];
+        self.m_rows=[];
+        self.m_boxes=[];
 
-
-def genGraph():
-    graph=[];
-    boxGraph=[];
-    crabGraph=[[],[],[]];
-    boxCoord=0;
-
-    for z in range(0,9):
-        boxGraph.append([]);
-
-    for y in range(0,9):
-        graph.append([]);
         for x in range(0,9):
-            boxCoord=calcBox(x,y);
-            newScell=scell(x,y,boxCoord);
-            graph[y].append(newScell);
-            boxGraph[boxCoord].append(newScell);
+            self.m_cols.append(crab());
+            self.m_rows.append(crab());
+            self.m_boxes.append(crab());
 
-    for x2 in crabGraph:
-        for x3 in range(0,9):
-            x2.append(crab());
+        for x in range(0,9):
+            for y in range(0,9):
+                tempCell=scell();
+                self.m_cols[x].m_cells.append(tempCell);
+                self.m_rows[y].m_cells.append(tempCell);
+                self.m_boxes[calcBox(x,y)].m_cells.append(tempCell);
 
-    # graphPrint(graph);
-    # boxGraphPrint(boxGraph);
+    def add(self,col,row,value):
+        self.m_rows[row].m_cells[col].m_value=value;
+        for x in self.m_rows[row].m_cells:
+            x.m_possible.discard(value);
 
-    return [graph,boxGraph,crabGraph];
+def calcBox(col,row):
+    return calcBoxConvert(col)+(calcBoxConvert(row)*3);
 
-def calcBox(x,y):
-    return calcBox2(x)+(3*calcBox2(y));
-
-def calcBox2(num):
+def calcBoxConvert(num):
     if num<3:
         return 0;
 
     if num<6:
         return 1;
-        
+
     return 2;
 
-def graphPrint(graph):
-    for x in graph:
-        for y in x:
-            print(y.m_possible,end=" ");
-        print("");
-
-def boxGraphPrint(boxGraph):
-    for x in boxGraph:
-        for y in x:
-            print([y.m_x,y.m_y],end=" ");
-        print("");
-
-def addCell(x,y,v,graph):
-    graph[0][y][x].m_v=v;
-
-    graph[0][y][x].m_possible.discard(v);
-
-    #column (y)
-    for x2 in graph[0]:
-        # print(x2[y].m_y);
-        x2[y].m_possible.discard(v);
-        
-    
-    #row (x)
-    for x3 in graph[0][y]:
-        #print(x3.m_y);
-        x3.m_possible.discard(v);
-
-    #box (z)
-    for x4 in graph[1][graph[0][y][x].m_z]:
-        #print(x4.m_z);
-        x4.m_possible.discard(v);
-
-def printimPossible(graph):
-    for x in graph:
-        for y in x:
-            print(list(set([1,2,3,4,5,6,7,8,9]).difference(y.m_possible)),end=" ");
-        print("");
-
 def main():
-    #[graph,boxGraph]
-    graph=genGraph();
+    mainCrabs=crabs();
 
-    addCell(1,0,2,graph);
-    addCell(2,0,1,graph);
+    mainCrabs.add(3,2,2);
 
-    printimPossible(graph[0]);
+    for x in mainCrabs.m_rows:
+        for y in x.m_cells:
+            print(y.m_value,end=" ");
+        print("");
+
+    return;
 
 main();
