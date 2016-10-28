@@ -61,11 +61,29 @@ class crabs:
 
     def searchSingles(self):
         for x in self.m_boxes:
-            for y in x.m_cells:
+            singleFound=set([1,2,3,4,5,6,7,8,9]);
+            doubleFound=set([]);
+
+            for y in x.m_cells:                
                 if len(y.m_possible)==1:
                     addValue=y.m_possible.pop();
                     self.add(y.m_col,y.m_row,addValue);
                     print("{} added at col {} row {}".format(addValue,y.m_col,y.m_row));
+
+                if y.m_value!=-1:
+                    singleFound.discard(y.m_value);
+                    doubleFound.add(y.m_value);
+                else:
+                    tempPossible=y.m_possible.copy();
+                    tempSet=singleFound&tempPossible;
+                    singleFound-=tempSet;
+                    tempPossible-=tempSet;
+                    doubleFound|=tempPossible;
+
+            print("unique values: ",end="");
+            print(set([1,2,3,4,5,6,7,8,9])-doubleFound);
+
+                
         
 def calcBox(col,row):
     return calcBoxConvert(col)+(calcBoxConvert(row)*3);
