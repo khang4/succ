@@ -9,14 +9,18 @@ class scell:
 
 class crab:
     def __init__(self):
-        self.m_values=set([]);
-        self.m_seen=set([]);
-        self.m_doubles=set([]);
+        #tracks number of possiblities
+        possibleArray=[9,9,9,9,9,9,9,9,9];
+
+        self.m_values=possibleArray[:];
+        self.m_seen=possibleArray[:];
+        self.m_doubles=possibleArray[:];
 
 
 def genGraph():
     graph=[];
     boxGraph=[];
+    crabGraph=[[],[],[]];
     boxCoord=0;
 
     for z in range(0,9):
@@ -30,10 +34,14 @@ def genGraph():
             graph[y].append(newScell);
             boxGraph[boxCoord].append(newScell);
 
+    for x2 in crabGraph:
+        for x3 in range(0,9):
+            x2.append(crab());
+
     # graphPrint(graph);
     # boxGraphPrint(boxGraph);
 
-    return [graph,boxGraph];
+    return [graph,boxGraph,crabGraph];
 
 def calcBox(x,y):
     return calcBox2(x)+(3*calcBox2(y));
@@ -68,6 +76,7 @@ def addCell(x,y,v,graph):
     for x2 in graph[0]:
         # print(x2[y].m_y);
         x2[y].m_possible.discard(v);
+        
     
     #row (x)
     for x3 in graph[0][y]:
